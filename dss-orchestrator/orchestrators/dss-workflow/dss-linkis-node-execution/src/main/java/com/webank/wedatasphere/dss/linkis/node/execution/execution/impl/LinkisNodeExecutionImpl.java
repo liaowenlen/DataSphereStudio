@@ -21,11 +21,18 @@ import com.webank.wedatasphere.dss.linkis.node.execution.exception.LinkisJobExec
 import com.webank.wedatasphere.dss.linkis.node.execution.execution.LinkisNodeExecution;
 import com.webank.wedatasphere.dss.linkis.node.execution.job.Job;
 import com.webank.wedatasphere.dss.linkis.node.execution.listener.LinkisExecutionListener;
-import com.webank.wedatasphere.dss.linkis.node.execution.parser.*;
+import com.webank.wedatasphere.dss.linkis.node.execution.parser.AppConn2LinkisJobParser;
+import com.webank.wedatasphere.dss.linkis.node.execution.parser.BML2LinkisJobParser;
+import com.webank.wedatasphere.dss.linkis.node.execution.parser.CodeParser;
+import com.webank.wedatasphere.dss.linkis.node.execution.parser.JobParamsParser;
+import com.webank.wedatasphere.dss.linkis.node.execution.parser.JobParser;
+import com.webank.wedatasphere.dss.linkis.node.execution.parser.JobRuntimeParamsParser;
 import com.webank.wedatasphere.dss.linkis.node.execution.service.LinkisURLService;
 import com.webank.wedatasphere.dss.linkis.node.execution.service.impl.BuildJobActionImpl;
 import com.webank.wedatasphere.dss.linkis.node.execution.utils.LinkisJobExecutionUtils;
 import com.webank.wedatasphere.dss.linkis.node.execution.utils.LinkisUjesClientUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.linkis.common.exception.LinkisException;
 import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.ujes.client.UJESClient;
@@ -36,16 +43,13 @@ import org.apache.linkis.ujes.client.request.ResultSetAction;
 import org.apache.linkis.ujes.client.response.JobInfoResult;
 import org.apache.linkis.ujes.client.response.JobLogResult;
 import org.apache.linkis.ujes.client.response.OpenLogResult;
-import org.apache.commons.lang3.StringUtils;
-import scala.tools.nsc.settings.Final;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.io.IOUtils;
 
 
 public class LinkisNodeExecutionImpl implements LinkisNodeExecution , LinkisExecutionListener {
@@ -53,9 +57,9 @@ public class LinkisNodeExecutionImpl implements LinkisNodeExecution , LinkisExec
     private static LinkisNodeExecution linkisExecution = new LinkisNodeExecutionImpl();
 
     private LinkisNodeExecutionImpl() {
+        registerJobParser(new JobParamsParser());
         registerJobParser(new CodeParser());
         registerJobParser(new JobRuntimeParamsParser());
-        registerJobParser(new JobParamsParser());
         registerJobParser(new BML2LinkisJobParser());
         registerJobParser(new AppConn2LinkisJobParser());
     }
