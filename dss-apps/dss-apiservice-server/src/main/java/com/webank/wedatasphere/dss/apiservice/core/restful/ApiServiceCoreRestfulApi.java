@@ -119,9 +119,14 @@ public class ApiServiceCoreRestfulApi {
                     return Message.error("'api service metadata.configuration' is missing[请选择数据源]");
                 }
 
-                Map<String, Object> datasource = (Map<String, Object>) configuration.get("datasource");
-                if (MapUtils.isEmpty(datasource)) {
-                    return Message.error("'api service metadata.configuration.datasource' is missing[请选择数据源]");
+                Map<String, Object> runtime = (Map<String, Object>) configuration.get("runtime");
+                if (MapUtils.isEmpty(runtime)) {
+                    return Message.error("'api service metadata.configuration.runtime' is missing[请选择数据源]");
+                }
+
+                String dataSource = (String) runtime.get("wds.linkis.engine.runtime.datasource");
+                if (StringUtils.isBlank(dataSource)) {
+                    return Message.error("'api service metadata.configuration.runtime[wds.linkis.engine.runtime.datasource]' is missing[请选择数据源]");
                 }
             }
 

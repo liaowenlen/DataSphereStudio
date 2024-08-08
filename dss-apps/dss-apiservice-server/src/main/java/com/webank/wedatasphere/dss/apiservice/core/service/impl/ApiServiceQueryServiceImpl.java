@@ -44,6 +44,7 @@ import org.apache.linkis.bml.client.BmlClient;
 import org.apache.linkis.bml.client.BmlClientFactory;
 import org.apache.linkis.bml.protocol.BmlDownloadResponse;
 import org.apache.linkis.common.io.FsPath;
+import org.apache.linkis.protocol.utils.TaskUtils;
 import org.apache.linkis.storage.source.FileSource;
 import org.apache.linkis.ujes.client.UJESClient;
 import org.apache.linkis.ujes.client.response.JobExecuteResult;
@@ -232,15 +233,29 @@ public class ApiServiceQueryServiceImpl implements ApiServiceQueryService {
             });
 
             ApiServiceExecuteJob job = new DefaultApiServiceJob();
-            //sql代码封装成scala执行
-            job.setCode(ExecuteCodeHelper.packageCodeToExecute(executeCode, maxApiVersionVo.getMetadataInfo()));
+            if ("spark".equals(apiServiceVo.getType())) {
+                //sql代码封装成scala执行
+                job.setCode(ExecuteCodeHelper.packageCodeToExecute(executeCode, maxApiVersionVo.getMetadataInfo()));
+                job.setRunType("scala");
+            } else if ("jdbc".equals(apiServiceVo.getType())) {
+                job.setCode(executeCode);
+                job.setRunType("jdbc");
+            }
+
+            Map<String, Object> params = null;
+            if ("jdbc".equals(apiServiceVo.getType())) {
+                params = new HashMap<>();
+                Map<String, Object> configuration = (Map) ((Map) collect.getFirst()).get("configuration");
+                Map<String, Object> runtime = (Map) configuration.get("runtime");
+                TaskUtils.addConfigurationMap(params, runtime, "runtime");
+            }
+
             job.setEngineType(apiServiceVo.getType());
-            job.setRunType("scala");
             //不允许创建用户自己随意代理执行，创建用户只能用自己用户执行
             //如果需要代理执行可以在这里更改用户
             job.setUser(loginUser);
 
-            job.setParams(null);
+            job.setParams(params);
             job.setRuntimeParams(reqParams);
             job.setScriptePath(apiServiceVo.getScriptPath());
             UJESClient ujesClient = LinkisJobSubmit.getClient(paramTypes);
