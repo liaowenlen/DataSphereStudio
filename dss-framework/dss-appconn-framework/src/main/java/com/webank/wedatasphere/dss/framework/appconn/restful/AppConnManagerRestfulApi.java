@@ -25,10 +25,8 @@ import com.webank.wedatasphere.dss.appconn.manager.service.AppConnInfoService;
 import com.webank.wedatasphere.dss.appconn.manager.utils.AppConnManagerUtils;
 import com.webank.wedatasphere.dss.common.exception.DSSRuntimeException;
 import com.webank.wedatasphere.dss.common.utils.DSSExceptionUtils;
-import com.webank.wedatasphere.dss.framework.appconn.conf.AppConnConf;
 import com.webank.wedatasphere.dss.framework.appconn.service.AppConnQualityChecker;
 import com.webank.wedatasphere.dss.framework.appconn.service.AppConnResourceUploadService;
-import com.webank.wedatasphere.dss.sender.service.conf.DSSSenderServiceConf;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.linkis.common.utils.Utils;
 import org.apache.linkis.server.Message;
@@ -65,6 +63,8 @@ public class AppConnManagerRestfulApi {
 
     @PostConstruct
     public void init() throws InterruptedException {
+        AppConnManager.getAppConnManager();
+
         //仅dss-server-dev的其中一个服务需要作为appconn-manager节点上传appconn包，其他服务都是client端
         if (AppConnManagerCoreConf.IS_APPCONN_MANAGER.getValue()) {
             LOGGER.info("First, try to load all AppConn...");
