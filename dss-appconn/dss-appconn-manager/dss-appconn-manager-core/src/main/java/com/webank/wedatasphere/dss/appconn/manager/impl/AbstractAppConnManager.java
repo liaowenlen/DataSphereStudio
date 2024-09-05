@@ -17,12 +17,10 @@
 package com.webank.wedatasphere.dss.appconn.manager.impl;
 
 import com.webank.wedatasphere.dss.appconn.core.AppConn;
-import com.webank.wedatasphere.dss.appconn.core.exception.AppConnErrorException;
 import com.webank.wedatasphere.dss.appconn.core.exception.AppConnWarnException;
 import com.webank.wedatasphere.dss.appconn.loader.loader.AppConnLoader;
 import com.webank.wedatasphere.dss.appconn.loader.loader.AppConnLoaderFactory;
 import com.webank.wedatasphere.dss.appconn.manager.AppConnManager;
-import com.webank.wedatasphere.dss.appconn.manager.conf.AppConnManagerCoreConf;
 import com.webank.wedatasphere.dss.appconn.manager.entity.AppConnInfo;
 import com.webank.wedatasphere.dss.appconn.manager.entity.AppInstanceInfo;
 import com.webank.wedatasphere.dss.appconn.manager.service.AppConnInfoService;
@@ -41,7 +39,12 @@ import org.apache.linkis.common.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -73,7 +76,7 @@ public abstract class AbstractAppConnManager implements AppConnManager {
             if (appConnManager == null) {
                 //appconn-manager-core包无法引入manager-client包，会有maven循环依赖，这里通过反射获取client的实现类
                 //ismanager=false时，获取client端的AppConnManager实现类，ismanager=true时，获取appconn-framework端的AppConnManager实现类。
-                appConnManager = !AppConnManagerCoreConf.IS_APPCONN_MANAGER.getValue() ? ClassUtils.getInstanceOrWarn(AppConnManagerImpl.class) :
+                appConnManager = /*!AppConnManagerCoreConf.IS_APPCONN_MANAGER.getValue() ? ClassUtils.getInstanceOrWarn(AppConnManagerImpl.class) :*/
                         //通过包名过滤
                         ClassUtils.getInstanceOrDefault(AppConnManager.class, c -> c.getPackage().getName().contains("com.webank.wedatasphere.dss.framework.appconn"), new AppConnManagerImpl());
                 LOGGER.info("The instance of AppConnManager is {}.", appConnManager.getClass().getName());
