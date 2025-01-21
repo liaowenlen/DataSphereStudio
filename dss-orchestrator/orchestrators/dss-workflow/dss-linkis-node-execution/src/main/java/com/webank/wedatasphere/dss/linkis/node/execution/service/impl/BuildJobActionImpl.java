@@ -228,6 +228,8 @@ public class BuildJobActionImpl implements BuildJobAction {
             return LinkisJobExecutionConfiguration.APPCONN;
         } else if (engineType.toLowerCase().contains("shell")) {
             return "shell";
+        } else if (engineType.equals("flink")) {
+            return "sql";
         }
 
         return runType;
